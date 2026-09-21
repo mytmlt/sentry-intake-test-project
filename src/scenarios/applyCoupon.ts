@@ -11,11 +11,11 @@ export const meta = {
   id: 'apply-coupon',
   title: 'Apply coupon',
   description: 'Parses a checkout discount payload copied from a marketing email.',
-  resolved: false,
+  resolved: true,
 }
 
 function readCouponPayload(): string {
-  return '{code: SAVE10, percent: 10}'
+  return '{"code": "SAVE10", "percent": 10}'
 }
 
 export function run(): void {
