@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Sentry from '@sentry/react'
 import { isSentryConfigured } from './instrument'
+import { IntakePanels } from './IntakePanels'
 import { loadActiveScenarios } from './scenarios'
 import type { ActiveScenario } from './scenarios/types'
 import './App.css'
@@ -65,70 +66,84 @@ function App() {
     <div className="lab">
       <header className="hero">
         <p className="kicker">Harbor Shop</p>
-        <h1>Sentry Error Lab</h1>
+        <h1>Intake Test Lab</h1>
         <p className="lede">
-          Ten real storefront crashes. Each button reports a distinct Sentry
-          issue Superplane can patch. After a fix sets{' '}
-          <code>meta.resolved</code> to <code>true</code>, that button
-          disappears.
+          Create Jira and Sentry events that match SuperPlane factory intake
+          filters. Crash buttons still send browser errors SuperPlane can
+          patch.
         </p>
         <p className={sentryReady ? 'status ok' : 'status warn'} role="status">
           {sentryReady
-            ? 'Sentry DSN loaded — clicks will create issues.'
-            : 'No VITE_SENTRY_DSN in .env.local — errors stay local only.'}
+            ? 'Browser Sentry DSN loaded. Crash clicks create issues.'
+            : 'No VITE_SENTRY_DSN in .env.local. Crash errors stay local.'}
         </p>
-        <p className="count">{scenarios.length} open crashes</p>
       </header>
 
-      {scenarios.length === 0 ? (
-        <p className="empty">All Harbor Shop crashes are fixed.</p>
-      ) : (
-        <ul className="grid">
-          {scenarios.map((scenario) => (
-            <li key={scenario.meta.id} className="card">
-              <h2>{scenario.meta.title}</h2>
-              <p>{scenario.meta.description}</p>
-              <div className="path-row">
-                <code className="path">{scenario.file}</code>
+      <IntakePanels />
+
+      <section className="crashes">
+        <div className="section-head">
+          <h2>Browser crash scenarios</h2>
+          <p>
+            Each button reports a distinct Sentry issue. After a fix sets{' '}
+            <code>meta.resolved</code> to <code>true</code>, that button
+            disappears.
+          </p>
+          <p className="count">{scenarios.length} open crashes</p>
+        </div>
+
+        {scenarios.length === 0 ? (
+          <p className="empty">All Harbor Shop crashes are fixed.</p>
+        ) : (
+          <ul className="grid">
+            {scenarios.map((scenario) => (
+              <li key={scenario.meta.id} className="card">
+                <h2>{scenario.meta.title}</h2>
+                <p>{scenario.meta.description}</p>
+                <div className="path-row">
+                  <code className="path">{scenario.file}</code>
+                  <button
+                    type="button"
+                    className="copy-path"
+                    onClick={() => {
+                      void copyPath(scenario.file)
+                    }}
+                  >
+                    {copiedPath === scenario.file ? 'Copied' : 'Copy path'}
+                  </button>
+                </div>
                 <button
                   type="button"
-                  className="copy-path"
-                  onClick={() => {
-                    void copyPath(scenario.file)
-                  }}
+                  className="trigger"
+                  onClick={() => setResult(triggerScenario(scenario))}
                 >
-                  {copiedPath === scenario.file ? 'Copied' : 'Copy path'}
+                  Trigger error
                 </button>
-              </div>
-              <button
-                type="button"
-                className="trigger"
-                onClick={() => setResult(triggerScenario(scenario))}
-              >
-                Trigger error
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <section className="result" aria-live="polite">
-        {result.kind === 'idle' ? (
-          <p>Click a button to fire a crash.</p>
-        ) : result.kind === 'ok' ? (
-          <p>
-            <strong>{result.title}</strong> completed without throwing. If this
-            still shows in the lab, set <code>meta.resolved</code> to{' '}
-            <code>true</code>.
-          </p>
-        ) : (
-          <p>
-            <strong>{result.title}</strong>
-            <br />
-            {result.name}: {result.message}
-            {sentryReady ? ' — sent to Sentry.' : ' — not sent (missing DSN).'}
-          </p>
+              </li>
+            ))}
+          </ul>
         )}
+
+        <section className="result" aria-live="polite">
+          {result.kind === 'idle' ? (
+            <p>Click a crash button to fire a browser error.</p>
+          ) : result.kind === 'ok' ? (
+            <p>
+              <strong>{result.title}</strong> completed without throwing. If this
+              still shows in the lab, set <code>meta.resolved</code> to{' '}
+              <code>true</code>.
+            </p>
+          ) : (
+            <p>
+              <strong>{result.title}</strong>
+              <br />
+              {result.name}: {result.message}
+              {sentryReady
+                ? ' Sent to Sentry.'
+                : ' Not sent. Missing DSN.'}
+            </p>
+          )}
+        </section>
       </section>
     </div>
   )

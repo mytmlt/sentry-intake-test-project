@@ -151,6 +151,160 @@
   min-height: 4.5rem;
 }
 
+.intake,
+.crashes {
+  margin-bottom: 2.5rem;
+}
+
+.section-head {
+  margin-bottom: 1rem;
+}
+
+.section-head h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.section-head p,
+.hint {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.hint {
+  margin: 0.75rem 0 0;
+}
+
+.readiness {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.readiness li {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.readiness li.ok {
+  color: var(--ok);
+  background: var(--ok-bg);
+}
+
+.readiness li.warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.panel h3 {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.05rem;
+}
+
+.panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.panel input,
+.panel select {
+  font: inherit;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+}
+
+.panel button,
+.matrix-actions button {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
+  background: var(--accent);
+  color: #0f1218;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.panel button:disabled,
+.matrix-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.panel button:hover:not(:disabled),
+.matrix-actions button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.matrix-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.matrix-actions button {
+  background: var(--panel);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.matrix-actions button.primary {
+  background: var(--accent);
+  color: #0f1218;
+  border: 0;
+}
+
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.log li.ok {
+  color: var(--ok);
+}
+
+.log li.warn {
+  color: var(--warn);
+}
+
+.log-at {
+  color: var(--muted);
+  margin-right: 0.4rem;
+}
+
 @media (max-width: 640px) {
   .lab {
     padding: 1.5rem 1rem 2rem;
