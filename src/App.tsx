@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Sentry from '@sentry/react'
 import { isSentryConfigured } from './instrument'
 import { loadActiveScenarios } from './scenarios'
@@ -35,6 +35,31 @@ function App() {
   const scenarios = useMemo(() => loadActiveScenarios(), [])
   const sentryReady = isSentryConfigured()
   const [result, setResult] = useState<LabResult>({ kind: 'idle' })
+  const [copiedPath, setCopiedPath] = useState<string | null>(null)
+  const copiedResetRef = useRef<number>(undefined)
+
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(copiedResetRef.current)
+    }
+  }, [])
+
+  async function copyPath(path: string) {
+    if (!navigator.clipboard?.writeText) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(path)
+      window.clearTimeout(copiedResetRef.current)
+      setCopiedPath(path)
+      copiedResetRef.current = window.setTimeout(() => {
+        setCopiedPath(null)
+      }, 2000)
+    } catch {
+      return
+    }
+  }
 
   return (
     <div className="lab">
@@ -63,9 +88,21 @@ function App() {
             <li key={scenario.meta.id} className="card">
               <h2>{scenario.meta.title}</h2>
               <p>{scenario.meta.description}</p>
-              <code className="path">{scenario.file}</code>
+              <div className="path-row">
+                <code className="path">{scenario.file}</code>
+                <button
+                  type="button"
+                  className="copy-path"
+                  onClick={() => {
+                    void copyPath(scenario.file)
+                  }}
+                >
+                  {copiedPath === scenario.file ? 'Copied' : 'Copy path'}
+                </button>
+              </div>
               <button
                 type="button"
+                className="trigger"
                 onClick={() => setResult(triggerScenario(scenario))}
               >
                 Trigger error
