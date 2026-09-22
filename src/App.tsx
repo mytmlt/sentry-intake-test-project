@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Sentry from '@sentry/react'
 import { isSentryConfigured } from './instrument'
+import { CartPanel } from './CartPanel'
 import { IntakePanels } from './IntakePanels'
 import { loadActiveScenarios } from './scenarios'
 import type { ActiveScenario } from './scenarios/types'
@@ -78,6 +79,8 @@ function App() {
             : 'No VITE_SENTRY_DSN in .env.local. Crash errors stay local.'}
         </p>
       </header>
+
+      <CartPanel />
 
       <IntakePanels />
 
