@@ -151,9 +151,59 @@
   min-height: 4.5rem;
 }
 
+.catalog,
 .intake,
 .crashes {
   margin-bottom: 2.5rem;
+}
+
+.product-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.product-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 140px;
+}
+
+.product-card h3 {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.05rem;
+}
+
+.product-price {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.product-stock {
+  margin-top: auto;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.product-stock.in-stock {
+  color: var(--ok);
+}
+
+.product-stock.low-stock {
+  color: var(--warn);
+}
+
+.product-stock.out-of-stock {
+  color: var(--danger);
 }
 
 .section-head {
