@@ -37,7 +37,14 @@ function App() {
   const sentryReady = isSentryConfigured()
   const [result, setResult] = useState<LabResult>({ kind: 'idle' })
   const [copiedPath, setCopiedPath] = useState<string | null>(null)
+  const [titleQuery, setTitleQuery] = useState('')
   const copiedResetRef = useRef<number>(undefined)
+  const titleFilter = titleQuery.trim().toLowerCase()
+  const visibleScenarios = titleFilter
+    ? scenarios.filter((scenario) =>
+        scenario.meta.title.toLowerCase().includes(titleFilter),
+      )
+    : scenarios
 
   useEffect(() => {
     return () => {
@@ -95,33 +102,48 @@ function App() {
         {scenarios.length === 0 ? (
           <p className="empty">All Harbor Shop crashes are fixed.</p>
         ) : (
-          <ul className="grid">
-            {scenarios.map((scenario) => (
-              <li key={scenario.meta.id} className="card">
-                <h2>{scenario.meta.title}</h2>
-                <p>{scenario.meta.description}</p>
-                <div className="path-row">
-                  <code className="path">{scenario.file}</code>
-                  <button
-                    type="button"
-                    className="copy-path"
-                    onClick={() => {
-                      void copyPath(scenario.file)
-                    }}
-                  >
-                    {copiedPath === scenario.file ? 'Copied' : 'Copy path'}
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  className="trigger"
-                  onClick={() => setResult(triggerScenario(scenario))}
-                >
-                  Trigger error
-                </button>
-              </li>
-            ))}
-          </ul>
+          <>
+            <div className="crash-filter">
+              <input
+                type="search"
+                value={titleQuery}
+                onChange={(event) => setTitleQuery(event.target.value)}
+                placeholder="Filter crashes…"
+                aria-label="Filter crashes"
+              />
+            </div>
+            {visibleScenarios.length === 0 ? (
+              <p className="filter-empty">No crashes match that filter.</p>
+            ) : (
+              <ul className="grid">
+                {visibleScenarios.map((scenario) => (
+                  <li key={scenario.meta.id} className="card">
+                    <h2>{scenario.meta.title}</h2>
+                    <p>{scenario.meta.description}</p>
+                    <div className="path-row">
+                      <code className="path">{scenario.file}</code>
+                      <button
+                        type="button"
+                        className="copy-path"
+                        onClick={() => {
+                          void copyPath(scenario.file)
+                        }}
+                      >
+                        {copiedPath === scenario.file ? 'Copied' : 'Copy path'}
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="trigger"
+                      onClick={() => setResult(triggerScenario(scenario))}
+                    >
+                      Trigger error
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
 
         <section className="result" aria-live="polite">
