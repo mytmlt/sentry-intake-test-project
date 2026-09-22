@@ -14,11 +14,60 @@ export const meta = {
   resolved: true,
 }
 
+export type Coupon = {
+  code: string
+  percent: number
+}
+
 function readCouponPayload(): string {
-  return '{"code": "SAVE10", "percent": 10}'
+  return '{"code": "SAVE10", "percent": 10'
+}
+
+function tryParseJson(raw: string): unknown {
+  try {
+    return JSON.parse(raw)
+  } catch {
+    const trimmed = raw.trim()
+    if (!trimmed) {
+      return null
+    }
+    const repaired = trimmed.endsWith('}') ? trimmed : `${trimmed}}`
+    try {
+      return JSON.parse(repaired)
+    } catch {
+      return null
+    }
+  }
+}
+
+function asCoupon(value: unknown): Coupon | null {
+  if (!value || typeof value !== 'object') {
+    return null
+  }
+  const record = value as Record<string, unknown>
+  if (typeof record.code !== 'string' || record.code.trim() === '') {
+    return null
+  }
+  if (typeof record.percent !== 'number' || !Number.isFinite(record.percent)) {
+    return null
+  }
+  return { code: record.code, percent: record.percent }
+}
+
+export function parseCouponPayload(raw: string): Coupon | null {
+  return asCoupon(tryParseJson(raw))
+}
+
+export function applyCoupon(subtotal: number, payload: string): number {
+  const coupon = parseCouponPayload(payload)
+  if (!coupon) {
+    return subtotal
+  }
+  const percent = Math.min(100, Math.max(0, coupon.percent))
+  return Math.round(subtotal * (100 - percent)) / 100
 }
 
 export function run(): void {
-  const coupon = JSON.parse(readCouponPayload()) as { code: string; percent: number }
-  void coupon.code
+  const discounted = applyCoupon(100, readCouponPayload())
+  void discounted
 }
