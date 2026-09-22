@@ -151,9 +151,64 @@
   min-height: 4.5rem;
 }
 
+.shop,
 .intake,
 .crashes {
   margin-bottom: 2.5rem;
+}
+
+.shop-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.shop-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.shop-list li > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.shop-list span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.qty-row,
+.shop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.shop button.secondary {
+  background: var(--panel);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.shop .primary-action {
+  margin-top: 0.2rem;
+}
+
+.cart-total {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.saved-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .section-head {
