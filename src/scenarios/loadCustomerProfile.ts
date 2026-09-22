@@ -11,7 +11,7 @@ export const meta = {
   id: 'load-customer-profile',
   title: 'Load customer profile',
   description: 'Opens the signed-out guest account and reads the profile email.',
-  resolved: false,
+  resolved: true,
 }
 
 type Customer = {
@@ -23,8 +23,10 @@ function getGuestCustomer(): Customer {
   return { id: 'guest', profile: null }
 }
 
+const GUEST_EMAIL = 'guest@harbor-shop.example'
+
 export function run(): void {
   const customer = getGuestCustomer()
-  const email = customer.profile!.email
+  const email = customer.profile?.email ?? GUEST_EMAIL
   void email
 }
