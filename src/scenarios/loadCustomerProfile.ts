@@ -3,15 +3,15 @@
  *
  * Sentry issue: TypeError reading `.email` on a null profile.
  *
- * Fix the crash so run() no longer throws, then set meta.resolved to true
- * so this trigger disappears from the Error Lab dashboard.
+ * Fixed: guest accounts have no profile yet, so run() now falls back to a
+ * guest email instead of forcing access on a null profile.
  */
 
 export const meta = {
   id: 'load-customer-profile',
   title: 'Load customer profile',
   description: 'Opens the signed-out guest account and reads the profile email.',
-  resolved: false,
+  resolved: true,
 }
 
 type Customer = {
@@ -19,12 +19,18 @@ type Customer = {
   profile: { email: string; name: string } | null
 }
 
+const GUEST_EMAIL = 'guest@harborshop.example'
+
 function getGuestCustomer(): Customer {
   return { id: 'guest', profile: null }
 }
 
+export function getCustomerEmail(customer: Customer): string {
+  return customer.profile?.email ?? GUEST_EMAIL
+}
+
 export function run(): void {
   const customer = getGuestCustomer()
-  const email = customer.profile!.email
+  const email = getCustomerEmail(customer)
   void email
 }
