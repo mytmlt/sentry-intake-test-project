@@ -11,7 +11,7 @@ export const meta = {
   id: 'open-latest-order',
   title: 'Open latest order',
   description: 'Loads the most recent order on the account history page.',
-  resolved: false,
+  resolved: true,
 }
 
 type Order = { id: string; total: number }
@@ -22,7 +22,7 @@ function listOrders(): Order[] {
 
 export function run(): void {
   const orders = listOrders()
-  const latest = orders[orders.length]!
-  const id = latest.id
+  const latest = orders[orders.length - 1]
+  const id = latest?.id ?? null
   void id
 }
