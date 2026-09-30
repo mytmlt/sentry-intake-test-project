@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import type { HttpClient, HttpRequest, HttpResponse } from './http.ts'
 import { instantClock } from './retry.ts'
-import { createSentryGenerator, type CaptureEvent, type EventCapture } from './sentry.ts'
+import {
+  createSentryGenerator,
+  createSyntheticIntakeError,
+  type CaptureEvent,
+  type EventCapture,
+} from './sentry.ts'
 
 const sentryConfig = {
   dsn: 'https://abc@o0.ingest.sentry.io/1',
@@ -31,6 +36,29 @@ function scriptedHttp(
   }
   return Object.assign(client, { calls })
 }
+
+describe('createSyntheticIntakeError', () => {
+  it('names the error IntakeTestError and preserves the message', () => {
+    const error = createSyntheticIntakeError('Harbor intake created error (abc123)')
+    expect(error.name).toBe('IntakeTestError')
+    expect(error.message).toBe('Harbor intake created error (abc123)')
+  })
+
+  it('gives the error a stable stack that does not leak the vite dev bundle', () => {
+    const error = createSyntheticIntakeError('Harbor intake created error (abc123)')
+    expect(error.stack).toContain('harborIntakeGenerator')
+    expect(error.stack).not.toContain('.vite-temp')
+    expect(error.stack).not.toContain('vite.config.ts.timestamp')
+  })
+
+  it('produces the same stack shape across calls, regardless of call site', () => {
+    const first = createSyntheticIntakeError('one')
+    const second = createSyntheticIntakeError('two')
+    const stackShape = (stack: string | undefined) =>
+      stack?.split('\n').slice(1).join('\n')
+    expect(stackShape(first.stack)).toBe(stackShape(second.stack))
+  })
+})
 
 describe('createSentryGenerator', () => {
   it('captures a created issue at the requested level and fingerprint', async () => {
