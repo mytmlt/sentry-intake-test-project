@@ -11,7 +11,7 @@ export const meta = {
   id: 'estimate-shipping-hops',
   title: 'Estimate shipping hops',
   description: 'Walks warehouse transfers until a parcel reaches the customer.',
-  resolved: false,
+  resolved: true,
 }
 
 function nextWarehouse(from: string): string {
@@ -19,7 +19,21 @@ function nextWarehouse(from: string): string {
 }
 
 function estimateHops(from: string): number {
-  return 1 + estimateHops(nextWarehouse(from))
+  const visited = new Set<string>()
+  let current = from
+  let hops = 0
+
+  while (true) {
+    visited.add(current)
+    const next = nextWarehouse(current)
+    if (visited.has(next)) {
+      break
+    }
+    hops += 1
+    current = next
+  }
+
+  return hops
 }
 
 export function run(): void {
