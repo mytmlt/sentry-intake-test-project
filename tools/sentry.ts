@@ -31,6 +31,31 @@ export type SentryGenerator = {
 
 let sentryInitializedForDsn = ''
 
+/**
+ * Builds the synthetic `Error` captured for a Harbor intake test event.
+ *
+ * The lab runs its Vite plugin through `vite dev`, which loads
+ * `vite.config.ts` through a freshly generated `.vite-temp` bundle on every
+ * server start. If we let `new Error()` pick up its stack from the live call
+ * site, Sentry reports a culprit like
+ * `?(.vite-temp:vite.config.ts.timestamp-<random>.mjs)` — a path that never
+ * repeats across restarts and gives triagers no way to recognize the event
+ * as an intentional, synthetic intake test rather than a real crash.
+ *
+ * Instead we give the error a stable, descriptive stack that always
+ * attributes the event to this generator, independent of how the lab's
+ * server happens to be running.
+ */
+export function createSyntheticIntakeError(message: string): Error {
+  const error = new Error(message)
+  error.name = 'IntakeTestError'
+  error.stack = [
+    `${error.name}: ${message}`,
+    '    at harborIntakeGenerator (tools/sentry.ts:createSyntheticIntakeError)',
+  ].join('\n')
+  return error
+}
+
 export function createSdkCapture(dsn: string): EventCapture {
   return async (event) => {
     if (!dsn) {
@@ -56,9 +81,9 @@ export function createSdkCapture(dsn: string): EventCapture {
       for (const [key, value] of Object.entries(event.tags)) {
         scope.setTag(key, value)
       }
-      const error = new Error(event.message)
-      error.name = 'IntakeTestError'
-      return Sentry.captureException(error)
+      return Sentry.captureException(
+        createSyntheticIntakeError(event.message),
+      )
     })
 
     const flushed = await Sentry.flush(5000)
