@@ -11,7 +11,7 @@ export const meta = {
   id: 'format-tax',
   title: 'Format tax',
   description: 'Formats sales tax from a catalog price that arrives as a string.',
-  resolved: false,
+  resolved: true,
 }
 
 function catalogPrice(): unknown {
@@ -19,7 +19,8 @@ function catalogPrice(): unknown {
 }
 
 export function run(): void {
-  const price = catalogPrice() as number
+  const raw = catalogPrice()
+  const price = typeof raw === 'string' ? parseFloat(raw) : (raw as number)
   const tax = price.toFixed(2)
   void tax
 }
