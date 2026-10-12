@@ -11,7 +11,7 @@ export const meta = {
   id: 'invoice-due-date',
   title: 'Invoice due date',
   description: 'Serializes the invoice due date from a malformed issued-on field.',
-  resolved: false,
+  resolved: true,
 }
 
 function invoiceIssuedOn(): string {
@@ -19,6 +19,7 @@ function invoiceIssuedOn(): string {
 }
 
 export function run(): void {
-  const due = new Date(invoiceIssuedOn()).toISOString()
+  const parsed = new Date(invoiceIssuedOn())
+  const due = Number.isNaN(parsed.getTime()) ? 'invalid-date' : parsed.toISOString()
   void due
 }
