@@ -1,1 +1,1 @@
-export const breakViteBuild: string = '123';
+export const breakViteBuild: string = 123;
