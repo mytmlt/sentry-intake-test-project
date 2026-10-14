@@ -1,1 +1,1 @@
-export const breakCi: number = "this breaks tsc";
+export const breakCi: string = "this breaks tsc";
