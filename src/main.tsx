@@ -5,6 +5,8 @@ import * as Sentry from '@sentry/react'
 import './index.css'
 import App from './App.tsx'
 
+
+
 createRoot(document.getElementById('root')!, {
   onUncaughtError: Sentry.reactErrorHandler(),
   onCaughtError: Sentry.reactErrorHandler(),
