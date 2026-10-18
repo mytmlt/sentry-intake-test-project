@@ -11,7 +11,7 @@ export const meta = {
   id: 'allocate-stock-slots',
   title: 'Allocate stock slots',
   description: 'Builds warehouse slots from an inventory count returned by the API.',
-  resolved: false,
+  resolved: true,
 }
 
 function availableStock(): number {
@@ -19,6 +19,6 @@ function availableStock(): number {
 }
 
 export function run(): void {
-  const slots = new Array(availableStock())
+  const slots = new Array(Math.max(0, availableStock()))
   void slots.length
 }

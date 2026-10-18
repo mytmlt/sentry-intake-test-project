@@ -11,7 +11,7 @@ export const meta = {
   id: 'place-order',
   title: 'Place order',
   description: 'Submits checkout and reads the receipt before awaiting the response.',
-  resolved: false,
+  resolved: true,
 }
 
 type Receipt = { orderId: string }
@@ -20,8 +20,8 @@ function submitOrder(): Promise<Receipt> {
   return Promise.resolve({ orderId: 'ord_200' })
 }
 
-export function run(): void {
-  const receipt = submitOrder() as unknown as Receipt
+export async function run(): Promise<void> {
+  const receipt = await submitOrder()
   const shortId = receipt.orderId.slice(0, 8)
   void shortId
 }
