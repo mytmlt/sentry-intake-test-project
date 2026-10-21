@@ -118,8 +118,9 @@ export function IntakePanels() {
       <div className="section-head">
         <h2>Factory intake events</h2>
         <p>
-          Create Jira and Sentry events for SuperPlane filter tests. Tokens stay
-          on the local server.
+          Create Jira and Sentry events for SuperPlane filter tests. SuperPlane
+          receives those events on the Sentry and Jira issue webhooks. Tokens
+          stay on the local server.
         </p>
       </div>
 

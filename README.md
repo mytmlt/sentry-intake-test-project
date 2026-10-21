@@ -101,6 +101,7 @@ A complete fix:
 3. Connect Sentry and Jira in SuperPlane. Use **On Issue Event** for Sentry and **On Issue** for Jira.
 4. Bind intake to the same Sentry project slug and Jira project key this lab uses.
 5. Create a lab event, then confirm it appears in the factory backlog when the filter matches.
+6. To test the GitHub issue webhook, open an issue in this repository. Confirm SuperPlane imports it when the issue filter matches.
 
 ## Commands
 
