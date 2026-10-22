@@ -11,13 +11,13 @@ type LabResult =
   | { kind: 'ok'; title: string }
   | { kind: 'error'; title: string; name: string; message: string }
 
-function triggerScenario(scenario: ActiveScenario): LabResult {
-  return Sentry.withScope((scope) => {
+async function triggerScenario(scenario: ActiveScenario): Promise<LabResult> {
+  return Sentry.withScope(async (scope) => {
     scope.setTag('scenario', scenario.meta.id)
     scope.setFingerprint(['harbor-shop', scenario.meta.id])
 
     try {
-      scenario.run()
+      await scenario.run()
       return { kind: 'ok', title: scenario.meta.title }
     } catch (error) {
       Sentry.captureException(error)
@@ -115,7 +115,7 @@ function App() {
                 <button
                   type="button"
                   className="trigger"
-                  onClick={() => setResult(triggerScenario(scenario))}
+                  onClick={async () => { setResult(await triggerScenario(scenario)) }}
                 >
                   Trigger error
                 </button>

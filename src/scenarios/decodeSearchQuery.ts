@@ -11,11 +11,11 @@ export const meta = {
   id: 'decode-search-query',
   title: 'Decode search query',
   description: 'Decodes the storefront search box value from the URL.',
-  resolved: false,
+  resolved: true,
 }
 
 function rawSearchParam(): string {
-  return '%'
+  return '%25'
 }
 
 export function run(): void {
