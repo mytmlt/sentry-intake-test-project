@@ -1,6 +1,6 @@
 import { configSecrets } from './config.ts'
 import { assembleDeps } from './deps.ts'
-import { handleIntakeHttp } from './http-api.ts'
+import { handleIntakeHttp, handleWebhookHttp } from './http-api.ts'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 
@@ -18,6 +18,16 @@ function pathnameOf(url: string | undefined): string {
   }
   const q = url.indexOf('?')
   return q === -1 ? url : url.slice(0, q)
+}
+
+function sendJson(
+  res: ServerResponse,
+  status: number,
+  body: unknown,
+): void {
+  res.statusCode = status
+  res.setHeader('Content-Type', 'application/json')
+  res.end(JSON.stringify(body, null, 2))
 }
 
 export function intakeLabPlugin(
@@ -43,12 +53,20 @@ export function createIntakeMiddleware(
     next: () => void,
   ) => {
     const path = pathnameOf(req.url)
+    const method = req.method ?? 'GET'
+
+    if (path.startsWith('/api/webhook')) {
+      const rawBody = await readBody(req)
+      const result = await handleWebhookHttp(method, path, rawBody)
+      sendJson(res, result.status, result.body)
+      return
+    }
+
     if (!path.startsWith('/api/intake')) {
       next()
       return
     }
 
-    const method = req.method ?? 'GET'
     const rawBody = method === 'POST' ? await readBody(req) : ''
     const { config, deps } = assembleDeps(env)
     const result = await handleIntakeHttp(
@@ -59,8 +77,6 @@ export function createIntakeMiddleware(
       configSecrets(config),
     )
 
-    res.statusCode = result.status
-    res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify(result.body, null, 2))
+    sendJson(res, result.status, result.body)
   }
 }

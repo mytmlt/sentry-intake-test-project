@@ -3,6 +3,7 @@ import { executeIntake, type IntakeDeps } from './operations.ts'
 import { redactSecrets } from './redact.ts'
 import type { IntakeRequest } from './types.ts'
 import { isSentryLevel } from './types.ts'
+import { handleWebhook } from './webhook.ts'
 
 export type HttpApiResult = {
   status: number
@@ -39,6 +40,35 @@ function parseRequest(path: string, method: string, raw: string): IntakeRequest 
     throw new IntakeError('Level must be fatal, error, warning, info, or debug.')
   }
   return request
+}
+
+function parseWebhookPath(path: string): 'sentry' | 'jira' | null {
+  if (path === '/api/webhook/sentry') return 'sentry'
+  if (path === '/api/webhook/jira') return 'jira'
+  return null
+}
+
+export async function handleWebhookHttp(
+  method: string,
+  path: string,
+  rawBody: string,
+): Promise<HttpApiResult> {
+  if (method !== 'POST') {
+    return jsonError(405, 'Webhook endpoint requires POST.')
+  }
+  const source = parseWebhookPath(path)
+  if (!source) {
+    return jsonError(404, 'Not found.')
+  }
+  try {
+    const body = handleWebhook(source, rawBody)
+    return { status: 200, body }
+  } catch (error) {
+    if (isIntakeError(error)) {
+      return jsonError(error.statusCode, error.message)
+    }
+    return jsonError(400, error instanceof Error ? error.message : String(error))
+  }
 }
 
 export async function handleIntakeHttp(
