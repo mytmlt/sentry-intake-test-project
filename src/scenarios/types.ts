@@ -7,7 +7,7 @@ export type ScenarioMeta = {
 
 export type ScenarioModule = {
   meta: ScenarioMeta
-  run: () => void
+  run: () => void | Promise<void>
 }
 
 export type ActiveScenario = ScenarioModule & {
