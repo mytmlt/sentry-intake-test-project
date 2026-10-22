@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parseConfig } from './config.ts'
-import { handleIntakeHttp } from './http-api.ts'
+import { handleIntakeHttp, handleWebhookHttp } from './http-api.ts'
 import type { IntakeDeps } from './operations.ts'
 
 const emptyDeps = {
@@ -71,5 +71,69 @@ describe('handleIntakeHttp', () => {
     )
     expect(result.status).toBe(500)
     expect(result.body).toEqual({ error: 'failed with ***' })
+  })
+})
+
+describe('handleWebhookHttp', () => {
+  it('accepts a Sentry webhook POST and returns the parsed result', async () => {
+    const result = await handleWebhookHttp(
+      'POST',
+      '/api/webhook/sentry',
+      JSON.stringify({ action: 'created', level: 'error' }),
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toMatchObject({
+      source: 'sentry',
+      event: 'issue.created',
+    })
+  })
+
+  it('accepts a Jira webhook POST and returns the parsed result', async () => {
+    const result = await handleWebhookHttp(
+      'POST',
+      '/api/webhook/jira',
+      JSON.stringify({ event: 'issue_created', issueKey: 'SHOP-1' }),
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toMatchObject({
+      source: 'jira',
+      event: 'issue.created',
+    })
+  })
+
+  it('rejects GET on webhook endpoints', async () => {
+    const result = await handleWebhookHttp('GET', '/api/webhook/sentry', '')
+    expect(result.status).toBe(405)
+    expect(result.body).toEqual({ error: 'Webhook endpoint requires POST.' })
+  })
+
+  it('rejects unknown webhook paths', async () => {
+    const result = await handleWebhookHttp('POST', '/api/webhook/unknown', '{}')
+    expect(result.status).toBe(404)
+    expect(result.body).toEqual({ error: 'Not found.' })
+  })
+
+  it('rejects invalid Sentry webhook payload', async () => {
+    const result = await handleWebhookHttp(
+      'POST',
+      '/api/webhook/sentry',
+      'not json',
+    )
+    expect(result.status).toBe(400)
+    expect(result.body).toMatchObject({
+      error: 'Invalid JSON in Sentry webhook payload.',
+    })
+  })
+
+  it('rejects invalid Jira webhook payload', async () => {
+    const result = await handleWebhookHttp(
+      'POST',
+      '/api/webhook/jira',
+      JSON.stringify({}),
+    )
+    expect(result.status).toBe(400)
+    expect(result.body).toMatchObject({
+      error: 'Jira webhook payload must include event.',
+    })
   })
 })
