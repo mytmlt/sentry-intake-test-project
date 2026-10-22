@@ -11,7 +11,7 @@ export const meta = {
   id: 'sum-cart-total',
   title: 'Sum cart total',
   description: 'Totals line items for a cart that has not been hydrated yet.',
-  resolved: false,
+  resolved: true,
 }
 
 type CartItem = { price: number; qty: number }
@@ -23,6 +23,6 @@ function fetchEmptyCart(): Cart {
 
 export function run(): void {
   const cart = fetchEmptyCart()
-  const total = cart.items!.reduce((sum, item) => sum + item.price * item.qty, 0)
+  const total = (cart.items ?? []).reduce((sum, item) => sum + item.price * item.qty, 0)
   void total
 }
