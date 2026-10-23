@@ -45,14 +45,28 @@ Generator tokens stay on the local Node process. The browser UI calls `/api/inta
 
 ```bash
 npm run intake -- status
-npm run intake -- jira create --labels intake-test --assignment unassigned
-npm run intake -- jira update --labels intake-test --assignment assigned
+npm run intake -- jira create [--labels a,b] [--assignment assigned|unassigned] [--issue-type Task] [--summary <text>] [--no-labels]
+npm run intake -- jira update [--issue KEY|--issue-key KEY] [--labels a,b] [--assignment assigned|unassigned] [--summary <text>] [--no-labels]
 npm run intake -- sentry create --level error
-npm run intake -- sentry regress --level fatal
-npm run intake -- sentry assign --level warning
-npm run intake -- matrix
-npm run intake -- matrix sentry
+npm run intake -- sentry regress|unresolved --level fatal
+npm run intake -- sentry assign|assigned --level warning
+npm run intake -- matrix [all|jira|sentry]
 ```
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--labels` | Comma-separated labels | `intake-test` |
+| `--no-labels` | Omit labels entirely | |
+| `--assignment` | `assigned` or `unassigned` | `unassigned` |
+| `--level` | `fatal`, `error`, `warning`, `info`, or `debug` | `error` |
+| `--issue` | Jira issue key for update | |
+| `--issue-key` | Alias for `--issue` | |
+| `--summary` | Custom summary text for Jira issues | |
+| `--issue-type` | Jira issue type | `Task` |
+
+Sentry subcommand aliases:
+- `sentry unresolved` — alias for `sentry regress`
+- `sentry assigned` — alias for `sentry assign`
 
 `jira update` without `--issue` creates a seed issue, then updates it. That fires `created` and then `updated`.
 
