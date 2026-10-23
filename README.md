@@ -109,3 +109,5 @@ npm test
 npm run lint
 npm run build
 ```
+
+CI runs these on every pull request.
