@@ -30,6 +30,10 @@ export async function retry<T>(
     shouldRetry: (error: unknown) => boolean
   },
 ): Promise<T> {
+  if (!Number.isInteger(options.attempts) || options.attempts < 1) {
+    throw new Error('retry attempts must be an integer >= 1')
+  }
+
   let lastError: unknown
 
   for (let attempt = 1; attempt <= options.attempts; attempt += 1) {
