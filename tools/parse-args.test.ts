@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseArgv } from './parse-args.ts'
+import { CLI_HELP, parseArgv } from './parse-args.ts'
 
 describe('parseArgv', () => {
   it('parses Jira create flags', () => {
@@ -47,5 +47,11 @@ describe('parseArgv', () => {
     expect(() => parseArgv(['sentry', 'create', '--level', 'log'])).toThrow(
       'Level must be fatal, error, warning, info, or debug.',
     )
+  })
+
+  it('documents all CLI flags in CLI_HELP', () => {
+    expect(CLI_HELP).toContain('--summary')
+    expect(CLI_HELP).toContain('--no-labels')
+    expect(CLI_HELP).toContain('--issue-key')
   })
 })
