@@ -1,6 +1,7 @@
 import { configSecrets } from './config.ts'
 import { assembleDeps } from './deps.ts'
 import { handleIntakeHttp } from './http-api.ts'
+import { redactSecrets } from './redact.ts'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 
@@ -48,19 +49,29 @@ export function createIntakeMiddleware(
       return
     }
 
-    const method = req.method ?? 'GET'
-    const rawBody = method === 'POST' ? await readBody(req) : ''
-    const { config, deps } = assembleDeps(env)
-    const result = await handleIntakeHttp(
-      method,
-      path,
-      rawBody,
-      deps,
-      configSecrets(config),
-    )
+    try {
+      const method = req.method ?? 'GET'
+      const rawBody = method === 'POST' ? await readBody(req) : ''
+      const { config, deps } = assembleDeps(env)
+      const result = await handleIntakeHttp(
+        method,
+        path,
+        rawBody,
+        deps,
+        configSecrets(config),
+      )
 
-    res.statusCode = result.status
-    res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify(result.body, null, 2))
+      res.statusCode = result.status
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify(result.body, null, 2))
+    } catch (error) {
+      const message = redactSecrets(
+        error instanceof Error ? error.message : String(error),
+        configSecrets(assembleDeps(env).config),
+      )
+      res.statusCode = 500
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ error: message }))
+    }
   }
 }
