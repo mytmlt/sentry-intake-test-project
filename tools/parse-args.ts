@@ -11,12 +11,22 @@ export const CLI_HELP = `Create Jira and Sentry events for SuperPlane factory in
 
 Usage:
   npm run intake -- status
-  npm run intake -- jira create [--labels a,b] [--assignment assigned|unassigned] [--issue-type Task]
-  npm run intake -- jira update [--issue KEY] [--labels a,b] [--assignment assigned|unassigned]
+  npm run intake -- jira create [--labels a,b] [--assignment assigned|unassigned] [--issue-type Task] [--summary <text>] [--no-labels]
+  npm run intake -- jira update [--issue KEY|--issue-key KEY] [--labels a,b] [--assignment assigned|unassigned] [--summary <text>] [--no-labels]
   npm run intake -- sentry create --level error
-  npm run intake -- sentry regress --level fatal
-  npm run intake -- sentry assign --level warning
+  npm run intake -- sentry regress|unresolved --level fatal
+  npm run intake -- sentry assign|assigned --level warning
   npm run intake -- matrix [all|jira|sentry]
+
+Flags:
+  --labels <list>         Comma-separated label list (default: intake-test)
+  --no-labels             Omit all labels (overrides --labels)
+  --assignment <mode>     assigned or unassigned (default: unassigned)
+  --level <level>         fatal, error, warning, info, or debug (default: error)
+  --issue-type <type>     Jira issue type (default: Task)
+  --issue <key>           Jira issue key to update
+  --issue-key <key>       Alias for --issue
+  --summary <text>        Custom summary (overrides the default description)
 `
 
 type FlagMap = Record<string, string | boolean>

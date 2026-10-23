@@ -45,20 +45,30 @@ Generator tokens stay on the local Node process. The browser UI calls `/api/inta
 
 ```bash
 npm run intake -- status
-npm run intake -- jira create --labels intake-test --assignment unassigned
-npm run intake -- jira update --labels intake-test --assignment assigned
+npm run intake -- jira create [--labels a,b] [--assignment assigned|unassigned] [--issue-type Task] [--summary <text>] [--no-labels]
+npm run intake -- jira update [--issue KEY|--issue-key KEY] [--labels a,b] [--assignment assigned|unassigned] [--summary <text>] [--no-labels]
 npm run intake -- sentry create --level error
-npm run intake -- sentry regress --level fatal
-npm run intake -- sentry assign --level warning
-npm run intake -- matrix
-npm run intake -- matrix sentry
+npm run intake -- sentry regress|unresolved --level fatal
+npm run intake -- sentry assign|assigned --level warning
+npm run intake -- matrix [all|jira|sentry]
 ```
 
-`jira update` without `--issue` creates a seed issue, then updates it. That fires `created` and then `updated`.
+Flags:
 
-`sentry regress` creates an issue, resolves it, then captures the same fingerprint again. SuperPlane sees `created` and then `unresolved`.
+- `--labels <list>` — Comma-separated label list (default: `intake-test`)
+- `--no-labels` — Omit all labels (overrides `--labels`)
+- `--assignment <mode>` — `assigned` or `unassigned` (default: `unassigned`)
+- `--level <level>` — `fatal`, `error`, `warning`, `info`, or `debug` (default: `error`)
+- `--issue-type <type>` — Jira issue type (default: `Task`)
+- `--issue <key>` — Jira issue key to update
+- `--issue-key <key>` — Alias for `--issue`
+- `--summary <text>` — Custom summary (overrides the default description)
 
-`sentry assign` creates an issue, then assigns it. SuperPlane sees `created` and then `assigned`.
+`jira update` without `--issue` or `--issue-key` creates a seed issue, then updates it. That fires `created` and then `updated`.
+
+`sentry regress` / `sentry unresolved` creates an issue, resolves it, then captures the same fingerprint again. SuperPlane sees `created` and then `unresolved`.
+
+`sentry assign` / `sentry assigned` creates an issue, then assigns it. SuperPlane sees `created` and then `assigned`.
 
 ## Matrix
 
