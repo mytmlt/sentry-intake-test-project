@@ -88,6 +88,9 @@ export async function executeIntake(
       return deps.sentry.assign({ level: request.level })
     case 'matrix':
       return runMatrix(request.source, deps, ready)
+    default:
+      request satisfies never
+      throw new IntakeError(`Unknown request kind.`)
   }
 }
 
