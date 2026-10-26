@@ -4,6 +4,16 @@ import { redactSecrets } from './redact.ts'
 import type { IntakeRequest } from './types.ts'
 import { isSentryLevel } from './types.ts'
 
+const KNOWN_KINDS = new Set<string>([
+  'status',
+  'jira.create',
+  'jira.update',
+  'sentry.create',
+  'sentry.unresolved',
+  'sentry.assigned',
+  'matrix',
+])
+
 export type HttpApiResult = {
   status: number
   body: unknown
@@ -30,6 +40,9 @@ function parseRequest(path: string, method: string, raw: string): IntakeRequest 
     throw new IntakeError('Request must include kind.')
   }
   const request = parsed as IntakeRequest
+  if (!KNOWN_KINDS.has(request.kind)) {
+    throw new IntakeError(`Unknown request kind: ${request.kind}.`)
+  }
   if (
     (request.kind === 'sentry.create' ||
       request.kind === 'sentry.unresolved' ||
