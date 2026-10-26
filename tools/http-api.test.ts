@@ -40,6 +40,17 @@ describe('handleIntakeHttp', () => {
     })
   })
 
+  it('rejects unknown kind with 400', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({ kind: 'nope' }),
+      emptyDeps,
+    )
+    expect(result.status).toBe(400)
+    expect(result.body).toEqual({ error: 'Unknown request kind: nope.' })
+  })
+
   it('redacts secrets from errors', async () => {
     const deps: IntakeDeps = {
       ...emptyDeps,
