@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseArgv } from './parse-args.ts'
+import { CLI_HELP, parseArgv } from './parse-args.ts'
 
 describe('parseArgv', () => {
   it('parses Jira create flags', () => {
@@ -41,6 +41,16 @@ describe('parseArgv', () => {
       kind: 'matrix',
       source: 'sentry',
     })
+  })
+
+  it('documents all flags in CLI_HELP', () => {
+    expect(CLI_HELP).toContain('--summary')
+    expect(CLI_HELP).toContain('--no-labels')
+    expect(CLI_HELP).toContain('--issue-key')
+    expect(CLI_HELP).toContain('unresolved')
+    expect(CLI_HELP).toContain('intake-test')
+    expect(CLI_HELP).toContain('unassigned')
+    expect(CLI_HELP).toContain('error')
   })
 
   it('rejects unknown levels', () => {
