@@ -13,6 +13,16 @@ function jsonError(status: number, message: string): HttpApiResult {
   return { status, body: { error: message } }
 }
 
+const KNOWN_KINDS = new Set([
+  'status',
+  'jira.create',
+  'jira.update',
+  'sentry.create',
+  'sentry.unresolved',
+  'sentry.assigned',
+  'matrix',
+])
+
 function parseRequest(path: string, method: string, raw: string): IntakeRequest {
   if (method === 'GET' && path === '/api/intake/status') {
     return { kind: 'status' }
@@ -28,6 +38,10 @@ function parseRequest(path: string, method: string, raw: string): IntakeRequest 
   }
   if (!parsed || typeof parsed !== 'object' || !('kind' in parsed)) {
     throw new IntakeError('Request must include kind.')
+  }
+  const { kind } = parsed as { kind: string }
+  if (!KNOWN_KINDS.has(kind)) {
+    throw new IntakeError(`Unknown request kind: ${kind}.`)
   }
   const request = parsed as IntakeRequest
   if (
