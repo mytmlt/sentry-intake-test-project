@@ -117,3 +117,5 @@ npm test
 npm run lint
 npm run build
 ```
+
+CI on pull requests runs `npm test`, `npm run lint`, and `npm run build`.
