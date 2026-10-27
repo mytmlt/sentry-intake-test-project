@@ -1,5 +1,19 @@
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { CLI_HELP, parseArgv } from './parse-args.ts'
+
+const DOCUMENTED_TOKENS = [
+  '--summary',
+  '--no-labels',
+  '--issue-key',
+  'unresolved',
+  'assigned',
+  'intake-test',
+  'unassigned',
+  'error',
+]
 
 describe('parseArgv', () => {
   it('parses Jira create flags', () => {
@@ -43,14 +57,19 @@ describe('parseArgv', () => {
     })
   })
 
-  it('documents all flags in CLI_HELP', () => {
-    expect(CLI_HELP).toContain('--summary')
-    expect(CLI_HELP).toContain('--no-labels')
-    expect(CLI_HELP).toContain('--issue-key')
-    expect(CLI_HELP).toContain('unresolved')
-    expect(CLI_HELP).toContain('intake-test')
-    expect(CLI_HELP).toContain('unassigned')
-    expect(CLI_HELP).toContain('error')
+  it('documents all flags in CLI_HELP and the README CLI section', () => {
+    const readme = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), '../README.md'),
+      'utf8',
+    )
+    const cliStart = readme.indexOf('## CLI')
+    const matrixStart = readme.indexOf('## Matrix')
+    const cliSection = readme.slice(cliStart, matrixStart)
+
+    for (const token of DOCUMENTED_TOKENS) {
+      expect(CLI_HELP).toContain(token)
+      expect(cliSection).toContain(token)
+    }
   })
 
   it('rejects unknown levels', () => {

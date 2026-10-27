@@ -55,12 +55,16 @@ npm run intake -- matrix [all|jira|sentry]
 
 | Flag | Description | Default |
 | --- | --- | --- |
-| `--summary <text>` | Override the auto-generated Jira summary | — |
-| `--no-labels` | Create the issue with no labels (overrides `--labels`) | — |
-| `--issue-key KEY` | Alternative to `--issue KEY` for `jira update` | — |
+| `--summary <text>` | Replace the generated summary when the text is non-empty after trim | — |
+| `--no-labels` | Set labels to an empty list and override the default | — |
+| `--issue-key KEY` | Alias of `--issue` for `jira update` | — |
 | `--labels <a,b>` | Comma-separated labels | `intake-test` |
 | `--assignment <mode>` | Jira assignment: `assigned` or `unassigned` | `unassigned` |
 | `--level <level>` | Sentry level: `fatal`, `error`, `warning`, `info`, or `debug` | `error` |
+| `unresolved` | Alias of `sentry regress` | — |
+| `assigned` | Alias of `sentry assign` | — |
+
+`unresolved` and `assigned` are aliases of `regress` and `assign`, and `--issue-key` aliases `--issue`.
 
 `jira update` without `--issue` or `--issue-key` creates a seed issue, then updates it. That fires `created` and then `updated`.
 

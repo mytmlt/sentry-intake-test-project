@@ -19,12 +19,16 @@ Usage:
   npm run intake -- matrix [all|jira|sentry]
 
 Flags:
-  --summary <text>          Override the auto-generated Jira summary
-  --no-labels               Create the issue with no labels (overrides --labels)
-  --issue-key KEY           Alternative to --issue KEY for jira update
+  --summary <text>          Replace the generated summary when the text is non-empty after trim
+  --no-labels               Set labels to an empty list and override the default
+  --issue-key KEY           Alias of --issue for jira update
   --labels <a,b>            Comma-separated labels (default: intake-test)
   --assignment <mode>       Jira assignment: assigned|unassigned (default: unassigned)
   --level <level>           Sentry level: fatal|error|warning|info|debug (default: error)
+
+Aliases:
+  unresolved                Alias of sentry regress
+  assigned                  Alias of sentry assign
 `
 
 type FlagMap = Record<string, string | boolean>
