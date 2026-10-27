@@ -41,4 +41,30 @@ describe('retry', () => {
     ).rejects.toThrow('boom')
     expect(attempts).toBe(1)
   })
+
+  it.each([
+    ['zero', 0],
+    ['a negative number', -1],
+    ['a non-integer', 1.5],
+    ['NaN', Number.NaN],
+    ['Infinity', Number.POSITIVE_INFINITY],
+  ])('rejects %s attempts without calling the operation', async (_label, attempts) => {
+    let calls = 0
+    await expect(
+      retry(
+        async () => {
+          calls += 1
+          return 'ok'
+        },
+        {
+          attempts,
+          delayMs: 10,
+          clock: instantClock,
+          shouldRetry: () => true,
+        },
+      ),
+    ).rejects.toThrow(new Error('retry attempts must be an integer >= 1'))
+    expect(calls).toBe(0)
+  })
+
 })
