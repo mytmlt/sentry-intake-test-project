@@ -3,15 +3,14 @@
  *
  * Sentry issue: TypeError calling `.reduce` on undefined cart items.
  *
- * Fix the crash so run() no longer throws, then set meta.resolved to true
- * so this trigger disappears from the Error Lab dashboard.
+ * Empty carts have no items, so the total is computed with a default empty array.
  */
 
 export const meta = {
   id: 'sum-cart-total',
   title: 'Sum cart total',
   description: 'Totals line items for a cart that has not been hydrated yet.',
-  resolved: false,
+  resolved: true,
 }
 
 type CartItem = { price: number; qty: number }
@@ -23,6 +22,6 @@ function fetchEmptyCart(): Cart {
 
 export function run(): void {
   const cart = fetchEmptyCart()
-  const total = cart.items!.reduce((sum, item) => sum + item.price * item.qty, 0)
+  const total = (cart.items ?? []).reduce((sum, item) => sum + item.price * item.qty, 0)
   void total
 }
