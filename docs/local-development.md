@@ -18,6 +18,8 @@ printed by the server.
 **Do not commit `.env.local`.** It is already ignored by Git and may contain
 credentials.
 
+asdf
+
 ## Optional credentials
 
 Jira and Sentry credentials can remain unset when working only on local scenario
