@@ -10,6 +10,7 @@ cp .env.example .env.local
 npm run dev
 ```
 asdfasdf
+asdf
 `npm install` installs project dependencies. The copy creates your local settings
 file, and `npm run dev` starts the Vite development server. Open the local URL
 printed by the server.
