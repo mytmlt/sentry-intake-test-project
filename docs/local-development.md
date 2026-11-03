@@ -19,6 +19,7 @@ printed by the server.
 credentials.
 
 asdf
+asdf
 
 ## Optional credentials
 
