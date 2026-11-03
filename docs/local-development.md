@@ -1,4 +1,4 @@
-# Local Development
+# Local development on your machine
 
 ## Setup
 
