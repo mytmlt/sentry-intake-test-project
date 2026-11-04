@@ -15,7 +15,7 @@ export const meta = {
 }
 
 function invoiceIssuedOn(): string {
-  return 'not-a-date-test test'
+  return 'not-a-date-test'
 }
 
 export function run(): void {
