@@ -19,10 +19,28 @@ function nextWarehouse(from: string): string {
 }
 
 function estimateHops(from: string): number {
-  return 1 + estimateHops(nextWarehouse(from))
+  const visited = new Set<string>()
+  let warehouse = from
+  let hops = 0
+
+  while (!visited.has(warehouse)) {
+    visited.add(warehouse)
+    const next = nextWarehouse(warehouse)
+    hops += 1
+
+    if (next === warehouse || visited.has(next)) {
+      return hops
+    }
+
+    warehouse = next
+  }
+
+  return hops
 }
 
 export function run(): void {
   const hops = estimateHops('harbor-dc')
   void hops
 }
+
+meta.resolved = true
