@@ -22,8 +22,8 @@ credentials.
 
 ## Commands requiring service configuration
 
-Create, update, and matrix commands can create external test data and need the
-relevant Jira or Sentry service configuration. They are outside this
+Create, update, and matrix commands can create external test data and require
+the relevant Jira or Sentry service configuration. They are outside this
 credential-free walkthrough. In particular, `jira update` creates a seed issue
 before updating it when neither `--issue` nor `--issue-key` is supplied.
 
