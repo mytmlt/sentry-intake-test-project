@@ -11,7 +11,7 @@ export const meta = {
   id: 'decode-search-query',
   title: 'Decode search query',
   description: 'Decodes the storefront search box value from the URL.',
-  resolved: false,
+  resolved: true,
 }
 
 function rawSearchParam(): string {
@@ -19,6 +19,14 @@ function rawSearchParam(): string {
 }
 
 export function run(): void {
-  const query = decodeURIComponent(rawSearchParam())
+  const rawQuery = rawSearchParam()
+  let query: string
+
+  try {
+    query = decodeURIComponent(rawQuery)
+  } catch {
+    query = rawQuery
+  }
+
   void query
 }
