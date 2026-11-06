@@ -1,7 +1,3 @@
 # Test owners for Human review automation.
 # Each owner needs accepted repository access to be eligible for assignment.
-/src/ @AleksandarCole
-/tools/ @lucaspin
-/docs/ @shiroyasha
-/.github/ @AleksandarCole @shiroyasha
-* @AleksandarCole @lucaspin @shiroyasha
+
