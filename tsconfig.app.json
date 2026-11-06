@@ -22,5 +22,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "tools/types.ts"]
+  "include": ["src", "tools/types.ts"],
+  "exclude": ["src/verifyImportFailure.ts"]
 }
