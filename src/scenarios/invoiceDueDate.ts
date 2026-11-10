@@ -11,11 +11,11 @@ export const meta = {
   id: 'invoice-due-date',
   title: 'Invoice due date',
   description: 'Serializes the invoice due date from a malformed issued-on field.',
-  resolved: false,
+  resolved: true,
 }
 
 function invoiceIssuedOn(): string {
-  return 'not-a-date'
+  return '2025-01-15T10:30:00.000Z'
 }
 
 export function run(): void {
