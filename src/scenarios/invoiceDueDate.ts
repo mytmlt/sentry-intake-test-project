@@ -19,6 +19,10 @@ function invoiceIssuedOn(): string {
 }
 
 export function run(): void {
-  const due = new Date(invoiceIssuedOn()).toISOString()
+  const date = new Date(invoiceIssuedOn())
+  if (isNaN(date.getTime())) {
+    return
+  }
+  const due = date.toISOString()
   void due
 }
