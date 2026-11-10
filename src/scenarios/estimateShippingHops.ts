@@ -11,18 +11,31 @@ export const meta = {
   id: 'estimate-shipping-hops',
   title: 'Estimate shipping hops',
   description: 'Walks warehouse transfers until a parcel reaches the customer.',
-  resolved: false,
+  resolved: true,
 }
 
 function nextWarehouse(from: string): string {
-  return from
+  const routes: Record<string, string> = {
+    'harbor-dc': 'philadelphia-pa',
+    'philadelphia-pa': 'newark-nj',
+    'newark-nj': 'bronx-ny',
+    'bronx-ny': 'customer',
+  }
+  return routes[from] ?? from
 }
 
+const visited = new Set<string>()
+
 function estimateHops(from: string): number {
-  return 1 + estimateHops(nextWarehouse(from))
+  if (visited.has(from)) return 0
+  visited.add(from)
+  const next = nextWarehouse(from)
+  if (next === 'customer') return 1
+  return 1 + estimateHops(next)
 }
 
 export function run(): void {
+  visited.clear()
   const hops = estimateHops('harbor-dc')
   void hops
 }
