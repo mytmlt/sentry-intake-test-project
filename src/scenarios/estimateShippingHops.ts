@@ -11,15 +11,19 @@ export const meta = {
   id: 'estimate-shipping-hops',
   title: 'Estimate shipping hops',
   description: 'Walks warehouse transfers until a parcel reaches the customer.',
-  resolved: false,
+  resolved: true,
 }
 
 function nextWarehouse(from: string): string {
   return from
 }
 
-function estimateHops(from: string): number {
-  return 1 + estimateHops(nextWarehouse(from))
+function estimateHops(from: string, visited: Set<string> = new Set()): number {
+  if (visited.has(from)) {
+    return 0
+  }
+  visited.add(from)
+  return 1 + estimateHops(nextWarehouse(from), visited)
 }
 
 export function run(): void {
