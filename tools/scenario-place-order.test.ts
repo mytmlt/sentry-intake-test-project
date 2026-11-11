@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { meta, run } from '../src/scenarios/placeOrder.ts'
 
-describe('placeOrder', () => {
-  it('awaits the receipt and reads the order ID without throwing', async () => {
-    await expect(run()).resolves.toBeUndefined()
-  })
+describe('place-order scenario', () => {
+  it('awaits submitOrder and reads the order ID from the receipt', async () => {
+    await run()
 
-  it('is marked resolved and keeps its id and title', () => {
-    expect(meta.resolved).toBe(true)
-    expect(meta.id).toBe('place-order')
-    expect(meta.title).toBe('Place order')
+    expect(meta).toMatchObject({
+      id: 'place-order',
+      title: 'Place order',
+      resolved: true,
+    })
   })
 })
