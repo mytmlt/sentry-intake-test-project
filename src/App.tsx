@@ -36,6 +36,7 @@ function App() {
   const scenarios = useMemo(() => loadActiveScenarios(), [])
   const sentryReady = isSentryConfigured()
   const [result, setResult] = useState<LabResult>({ kind: 'idle' })
+  const testVar: number = 'this is a string'
   const [copiedPath, setCopiedPath] = useState<string | null>(null)
   const copiedResetRef = useRef<number>(undefined)
 
