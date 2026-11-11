@@ -1,6 +1,8 @@
-# Local Development
+# Local development
 
-Quick-start guide for running this project on your machine.
+## Prerequisites
+
+[Node.js](https://nodejs.org) 18 or later.
 
 ## Setup
 
@@ -9,25 +11,25 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` with your credentials if you plan to use Jira or Sentry
-features. These are **optional** when working only on local scenario code
-and unit tests.
+Jira and Sentry credentials are optional when working only on local scenario
+code and unit tests.
 
-## Start the dev server
+## Run the dev server
 
 ```bash
 npm run dev
 ```
 
-## Checks
+Open the printed URL. The app loads without service credentials.
 
-| Command | Purpose |
+## Verify
+
+| Command | What it checks |
 | --- | --- |
-| `npm test` | Runs unit tests with Vitest. |
-| `npm run lint` | Runs the oxlint static analysis. |
-| `npm run build` | Type-checks with TypeScript and bundles with Vite. |
+| `npm test` | Unit tests with Vitest |
+| `npm run lint` | Code style with oxlint |
+| `npm run build` | TypeScript types with `tsc -b`, then production bundle with Vite |
 
-## Important
+## Keep `.env.local` out of version control
 
-`.env.local` contains secrets and must **never** be committed. It is already
-listed in `.gitignore`.
+`.env.local` is already in `.gitignore`. Verify it never enters a commit.
