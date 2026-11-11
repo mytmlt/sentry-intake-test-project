@@ -14,16 +14,20 @@ export const meta = {
   resolved: true,
 }
 
+function parsePrice(value: unknown): number {
+  const n = Number(value)
+  if (Number.isNaN(n)) {
+    throw new TypeError(`Invalid price: ${value}`)
+  }
+  return n
+}
+
 function catalogPrice(): unknown {
   return '19.99'
 }
 
 export function run(): void {
-  const raw = catalogPrice()
-  const price = typeof raw === 'number' ? raw : Number(raw)
-  if (Number.isNaN(price)) {
-    return
-  }
+  const price = parsePrice(catalogPrice())
   const tax = price.toFixed(2)
   void tax
 }

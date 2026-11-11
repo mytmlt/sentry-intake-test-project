@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { meta, run } from '../src/scenarios/formatTax.ts'
 
-describe('formatTax scenario', () => {
-  it('formats the catalog price without throwing', () => {
-    expect(run).not.toThrow()
+describe('scenario format-tax', () => {
+  it('formats the price correctly', () => {
+    run()
   })
 
-  it('has meta.resolved set to true', () => {
+  it('exports resolved metadata', () => {
+    expect(meta.id).toBe('format-tax')
+    expect(meta.title).toBe('Format tax')
     expect(meta.resolved).toBe(true)
   })
 })
