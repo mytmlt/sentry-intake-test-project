@@ -1,3 +1,3 @@
 // Temporary fixture for SuperPlane Verify import testing.
-// Intentional TS2322: keep the PR build check red during the test.
-export const verifyImportFailure: number = "intentional build failure";
+// Build must pass: keep this file valid.
+export const verifyImportFailure: number = 42;
