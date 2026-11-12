@@ -36,7 +36,70 @@ describe('handleIntakeHttp', () => {
     )
     expect(result.status).toBe(200)
     expect(result.body).toMatchObject({
-      readiness: { jira: false, sentryCapture: false },
+      data: { readiness: { jira: false, sentryCapture: false } },
+    })
+  })
+
+  it('returns result for POST /api/intake/run', async () => {
+    const deps: IntakeDeps = {
+      config: parseConfig({
+        JIRA_BASE_URL: 'https://example.atlassian.net',
+        JIRA_EMAIL: 'dev@example.com',
+        JIRA_API_TOKEN: 't',
+        JIRA_PROJECT_KEY: 'SHOP',
+        JIRA_ISSUE_TYPE: 'Task',
+      }),
+      jira: {
+        async create(request) {
+          return {
+            source: 'jira',
+            action: 'created',
+            issueKey: 'SHOP-42',
+            url: 'https://example.atlassian.net/browse/SHOP-42',
+            summary: `Intake: ${request.labels?.join(', ')}`,
+            labels: request.labels ?? [],
+            assignment: request.assignment,
+            seeded: false,
+          }
+        },
+        async update() {
+          throw new Error('not used')
+        },
+      },
+      sentry: {
+        async create() {
+          throw new Error('not used')
+        },
+        async regress() {
+          throw new Error('not used')
+        },
+        async assign() {
+          throw new Error('not used')
+        },
+      },
+    }
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'jira.create',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+      }),
+      deps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({
+      data: {
+        source: 'jira',
+        action: 'created',
+        issueKey: 'SHOP-42',
+        url: 'https://example.atlassian.net/browse/SHOP-42',
+        summary: 'Intake: intake-test',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+        seeded: false,
+      },
     })
   })
 
