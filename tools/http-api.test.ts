@@ -69,7 +69,62 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
+  })
+
+  it('returns 200 for invalid JSON with parse error', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      'not json at all',
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
+  })
+
+  it('returns 200 for request without kind field', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({ notKind: true }),
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request must include kind.' })
+  })
+
+  it('returns 200 for mocked upstream failure', async () => {
+    const deps: IntakeDeps = {
+      ...emptyDeps,
+      config: parseConfig({
+        JIRA_BASE_URL: 'https://example.atlassian.net',
+        JIRA_EMAIL: 'dev@example.com',
+        JIRA_API_TOKEN: 'mock-token',
+        JIRA_PROJECT_KEY: 'SHOP',
+      }),
+      jira: {
+        async create() {
+          throw new Error('upstream jira failure')
+        },
+        async update() {
+          throw new Error('not used')
+        },
+      },
+    }
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'jira.create',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+      }),
+      deps,
+      ['mock-token'],
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'upstream jira failure' })
   })
 })
