@@ -69,7 +69,65 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
+  })
+
+  it('returns 200 with error body for invalid JSON', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      'not-json',
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
+  })
+
+  it('returns 200 with error body for missing configuration', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({ kind: 'sentry.create', level: 'error' }),
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({
+      error: 'Set SENTRY_DSN or VITE_SENTRY_DSN to capture a Sentry event.',
+    })
+  })
+
+  it('returns 200 with error body for non-IntakeError thrown by dependencies', async () => {
+    const deps: IntakeDeps = {
+      ...emptyDeps,
+      config: parseConfig({
+        JIRA_BASE_URL: 'https://example.atlassian.net',
+        JIRA_EMAIL: 'dev@example.com',
+        JIRA_API_TOKEN: 'valid-token',
+        JIRA_PROJECT_KEY: 'SHOP',
+      }),
+      jira: {
+        async create() {
+          throw new TypeError('Cannot read properties of undefined')
+        },
+        async update() {
+          throw new Error('not used')
+        },
+      },
+    }
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'jira.create',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+      }),
+      deps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({
+      error: 'Cannot read properties of undefined',
+    })
   })
 })
