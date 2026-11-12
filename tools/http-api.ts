@@ -51,7 +51,7 @@ export async function handleIntakeHttp(
   try {
     const request = parseRequest(path, method, rawBody)
     const body = await executeIntake(request, deps)
-    return { status: 200, body }
+    return { status: 200, body: { data: body } }
   } catch (error) {
     const message = redactSecrets(
       error instanceof Error ? error.message : String(error),
