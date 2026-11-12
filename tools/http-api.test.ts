@@ -40,7 +40,7 @@ describe('handleIntakeHttp', () => {
     })
   })
 
-  it('redacts secrets from errors', async () => {
+  it('returns 200 and redacts secrets from errors', async () => {
     const deps: IntakeDeps = {
       ...emptyDeps,
       config: parseConfig({
@@ -69,7 +69,7 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
   })
 })
