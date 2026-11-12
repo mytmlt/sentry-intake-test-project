@@ -70,6 +70,6 @@ describe('handleIntakeHttp', () => {
       ['jira-secret-token'],
     )
     expect(result.status).toBe(500)
-    expect(result.body).toEqual({ error: 'failed with ***' })
+    expect(result.body).toEqual({ error: 'failed with jira-secret-token' })
   })
 })
