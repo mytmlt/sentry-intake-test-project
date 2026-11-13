@@ -36,7 +36,49 @@ describe('handleIntakeHttp', () => {
     )
     expect(result.status).toBe(200)
     expect(result.body).toMatchObject({
-      readiness: { jira: false, sentryCapture: false },
+      data: { readiness: { jira: false, sentryCapture: false } },
+    })
+  })
+
+  it('returns data wrapper for POST /api/intake/run', async () => {
+    const deps: IntakeDeps = {
+      ...emptyDeps,
+      config: parseConfig({
+        JIRA_BASE_URL: 'https://example.atlassian.net',
+        JIRA_EMAIL: 'dev@example.com',
+        JIRA_API_TOKEN: 'token',
+        JIRA_PROJECT_KEY: 'SHOP',
+      }),
+      jira: {
+        async create() {
+          return {
+            source: 'jira',
+            action: 'created',
+            issueKey: 'SHOP-1',
+            labels: ['intake-test'],
+            assignment: 'unassigned',
+            seeded: false,
+            summary: 'created unassigned',
+          }
+        },
+        async update() {
+          throw new Error('not used')
+        },
+      },
+    }
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'jira.create',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+      }),
+      deps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toMatchObject({
+      data: { source: 'jira', issueKey: 'SHOP-1' },
     })
   })
 
