@@ -103,7 +103,7 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
-  it('reports all services ready and lists missing env vars when config is empty', async () => {
+it('reports all services ready and lists missing env vars when config is empty', async () => {
     const { deps } = recordingDeps({})
     const result = await executeIntake({ kind: 'status' }, deps)
     expect(result).toEqual({
