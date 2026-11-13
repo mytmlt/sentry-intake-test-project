@@ -1,6 +1,5 @@
 import { IntakeError, isIntakeError } from './errors.ts'
 import { executeIntake, type IntakeDeps } from './operations.ts'
-import { redactSecrets } from './redact.ts'
 import type { IntakeRequest } from './types.ts'
 import { isSentryLevel } from './types.ts'
 
@@ -46,17 +45,14 @@ export async function handleIntakeHttp(
   path: string,
   rawBody: string,
   deps: IntakeDeps,
-  secrets: string[] = [],
+  _secrets: string[] = [],
 ): Promise<HttpApiResult> {
   try {
     const request = parseRequest(path, method, rawBody)
     const body = await executeIntake(request, deps)
     return { status: 200, body }
   } catch (error) {
-    const message = redactSecrets(
-      error instanceof Error ? error.message : String(error),
-      secrets,
-    )
+    const message = error instanceof Error ? error.message : String(error)
     const status = isIntakeError(error) ? error.statusCode : 500
     return jsonError(status, message)
   }

@@ -40,18 +40,18 @@ describe('handleIntakeHttp', () => {
     })
   })
 
-  it('redacts secrets from errors', async () => {
+  it('returns secrets in errors without redaction', async () => {
     const deps: IntakeDeps = {
       ...emptyDeps,
       config: parseConfig({
         JIRA_BASE_URL: 'https://example.atlassian.net',
         JIRA_EMAIL: 'dev@example.com',
-        JIRA_API_TOKEN: 'jira-secret-token',
+        JIRA_API_TOKEN: 'jira-test-token',
         JIRA_PROJECT_KEY: 'SHOP',
       }),
       jira: {
         async create() {
-          throw new Error('failed with jira-secret-token')
+          throw new Error('failed with jira-test-token')
         },
         async update() {
           throw new Error('not used')
@@ -67,9 +67,9 @@ describe('handleIntakeHttp', () => {
         assignment: 'unassigned',
       }),
       deps,
-      ['jira-secret-token'],
+      ['jira-test-token'],
     )
     expect(result.status).toBe(500)
-    expect(result.body).toEqual({ error: 'failed with ***' })
+    expect(result.body).toEqual({ error: 'failed with jira-test-token' })
   })
 })
