@@ -72,4 +72,15 @@ describe('handleIntakeHttp', () => {
     expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
   })
+
+  it('returns 200 with error body for invalid JSON', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      'not json',
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
+  })
 })
