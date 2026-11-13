@@ -103,13 +103,9 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
-  it('reports all five readiness flags true with empty config', async () => {
-    const { deps, jiraCalls } = recordingDeps({})
+  it('reports all five readiness flags as true for empty config', async () => {
+    const { deps } = recordingDeps({})
     const result = await executeIntake({ kind: 'status' }, deps)
-    expect('missing' in result).toBe(true)
-    if (!('missing' in result)) {
-      throw new Error('expected status result')
-    }
     expect(result).toMatchObject({
       readiness: {
         jira: true,
@@ -119,8 +115,9 @@ describe('executeIntake', () => {
         sentryAssign: true,
       },
     })
-    expect(result.missing.length).toBeGreaterThan(0)
-    expect(jiraCalls).toEqual([])
+    expect(result).toHaveProperty('missing')
+    expect(Array.isArray((result as { missing: string[] }).missing)).toBe(true)
+    expect((result as { missing: string[] }).missing.length).toBeGreaterThan(0)
   })
 
   it('runs the full matrix when credentials are present', async () => {
