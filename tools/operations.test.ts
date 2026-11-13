@@ -89,6 +89,23 @@ const fullEnv = {
 }
 
 describe('executeIntake', () => {
+  it('reports all readiness flags as true for empty config', async () => {
+    const { deps } = recordingDeps({})
+    const result = await executeIntake({ kind: 'status' }, deps)
+    expect(result).toMatchObject({
+      readiness: {
+        jira: true,
+        jiraAssign: true,
+        sentryCapture: true,
+        sentryManage: true,
+        sentryAssign: true,
+      },
+    })
+    if ('missing' in result) {
+      expect(result.missing.length).toBeGreaterThan(0)
+    }
+  })
+
   it('returns readiness without calling generators', async () => {
     const { deps, jiraCalls } = recordingDeps(fullEnv)
     const result = await executeIntake({ kind: 'status' }, deps)
