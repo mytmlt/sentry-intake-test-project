@@ -27,7 +27,7 @@ const emptyDeps = {
 } satisfies IntakeDeps
 
 describe('handleIntakeHttp', () => {
-  it('returns status for GET /api/intake/status', async () => {
+  it('returns status wrapped in data for GET /api/intake/status', async () => {
     const result = await handleIntakeHttp(
       'GET',
       '/api/intake/status',
@@ -36,7 +36,7 @@ describe('handleIntakeHttp', () => {
     )
     expect(result.status).toBe(200)
     expect(result.body).toMatchObject({
-      readiness: { jira: false, sentryCapture: false },
+      data: { readiness: { jira: false, sentryCapture: false } },
     })
   })
 
