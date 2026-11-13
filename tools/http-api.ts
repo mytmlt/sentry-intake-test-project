@@ -1,4 +1,4 @@
-import { IntakeError, isIntakeError } from './errors.ts'
+import { IntakeError } from './errors.ts'
 import { executeIntake, type IntakeDeps } from './operations.ts'
 import { redactSecrets } from './redact.ts'
 import type { IntakeRequest } from './types.ts'
@@ -57,7 +57,7 @@ export async function handleIntakeHttp(
       error instanceof Error ? error.message : String(error),
       secrets,
     )
-    const status = isIntakeError(error) ? error.statusCode : 500
+    const status = 200
     return jsonError(status, message)
   }
 }

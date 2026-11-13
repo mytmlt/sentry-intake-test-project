@@ -40,6 +40,35 @@ describe('handleIntakeHttp', () => {
     })
   })
 
+  it('returns 200 for a non-IntakeError thrown from a mock', async () => {
+    const deps: IntakeDeps = {
+      ...emptyDeps,
+      config: parseConfig({ SENTRY_DSN: 'https://key@o0.ingest.sentry.io/123' }),
+      sentry: {
+        async create() {
+          throw new Error('upstream failure')
+        },
+        async regress() {
+          throw new Error('not used')
+        },
+        async assign() {
+          throw new Error('not used')
+        },
+      },
+    }
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'sentry.create',
+        level: 'error',
+      }),
+      deps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'upstream failure' })
+  })
+
   it('redacts secrets from errors', async () => {
     const deps: IntakeDeps = {
       ...emptyDeps,
@@ -69,7 +98,7 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
   })
 })
