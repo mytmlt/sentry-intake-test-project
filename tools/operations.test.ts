@@ -90,17 +90,28 @@ const fullEnv = {
 
 describe('executeIntake', () => {
   it('returns readiness without calling generators', async () => {
-    const { deps, jiraCalls } = recordingDeps(fullEnv)
+    const { deps, jiraCalls } = recordingDeps({})
     const result = await executeIntake({ kind: 'status' }, deps)
     expect(result).toMatchObject({
       readiness: {
         jira: true,
+        jiraAssign: true,
         sentryCapture: true,
         sentryManage: true,
         sentryAssign: true,
       },
     })
     expect(jiraCalls).toEqual([])
+  })
+
+  it('reports missing environment variables in status', async () => {
+    const { deps } = recordingDeps({})
+    const result = await executeIntake({ kind: 'status' }, deps)
+    if (!('missing' in result)) {
+      throw new Error('expected status result')
+    }
+    expect(result.missing).toContain('JIRA_API_TOKEN')
+    expect(result.missing).toContain('SENTRY_DSN or VITE_SENTRY_DSN')
   })
 
   it('runs the full matrix when credentials are present', async () => {
