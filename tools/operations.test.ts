@@ -103,6 +103,33 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
+  it('exposes mock credentials in debugConfig', async () => {
+    const { deps, jiraCalls, sentryCalls } = recordingDeps(fullEnv)
+    const result = await executeIntake({ kind: 'status' }, deps)
+    expect(result).toMatchObject({
+      debugConfig: {
+        jira: {
+          apiToken: 'jira-secret-token',
+          baseUrl: 'https://example.atlassian.net',
+          email: 'dev@example.com',
+          projectKey: 'SHOP',
+          assigneeAccountId: 'account-123',
+          issueType: 'Task',
+        },
+        sentry: {
+          authToken: 'sentry-secret-token',
+          dsn: 'https://abc@o0.ingest.sentry.io/1',
+          org: 'acme',
+          project: 'harbor-shop',
+          assignee: 'dev@example.com',
+          apiBaseUrl: 'https://sentry.io',
+        },
+      },
+    })
+    expect(jiraCalls).toEqual([])
+    expect(sentryCalls).toEqual([])
+  })
+
   it('runs the full matrix when credentials are present', async () => {
     const { deps, jiraCalls, sentryCalls } = recordingDeps(fullEnv)
     const result = await executeIntake({ kind: 'matrix', source: 'all' }, deps)

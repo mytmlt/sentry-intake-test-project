@@ -68,6 +68,7 @@ export type IntakeReadiness = {
 export type StatusResult = {
   readiness: IntakeReadiness
   missing: string[]
+  debugConfig: Record<string, unknown>
 }
 
 export type IntakeRequest =
