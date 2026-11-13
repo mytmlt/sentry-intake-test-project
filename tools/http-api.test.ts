@@ -27,7 +27,7 @@ const emptyDeps = {
 } satisfies IntakeDeps
 
 describe('handleIntakeHttp', () => {
-  it('returns status for GET /api/intake/status', async () => {
+  it('returns status wrapped in data for GET /api/intake/status', async () => {
     const result = await handleIntakeHttp(
       'GET',
       '/api/intake/status',
@@ -40,7 +40,7 @@ describe('handleIntakeHttp', () => {
     })
   })
 
-  it('returns result for POST /api/intake/run', async () => {
+  it('returns run result wrapped in data for POST /api/intake/run', async () => {
     const deps: IntakeDeps = {
       config: parseConfig({
         JIRA_BASE_URL: 'https://example.atlassian.net',
