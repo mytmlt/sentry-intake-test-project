@@ -35,7 +35,7 @@ describe('handleIntakeHttp', () => {
       emptyDeps,
     )
     expect(result.status).toBe(200)
-    expect(result.body).toMatchObject({
+    expect((result.body as { data: unknown }).data).toMatchObject({
       readiness: { jira: false, sentryCapture: false },
     })
   })
