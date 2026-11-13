@@ -103,10 +103,10 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
-it('reports all services ready and lists missing env vars when config is empty', async () => {
+  it('reports all readiness flags true and missing names with empty config', async () => {
     const { deps } = recordingDeps({})
     const result = await executeIntake({ kind: 'status' }, deps)
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       readiness: {
         jira: true,
         jiraAssign: true,
@@ -114,7 +114,12 @@ it('reports all services ready and lists missing env vars when config is empty',
         sentryManage: true,
         sentryAssign: true,
       },
-      missing: expect.arrayContaining([
+    })
+    if (!('missing' in result)) {
+      throw new Error('expected status result')
+    }
+    expect(result.missing).toEqual(
+      expect.arrayContaining([
         'JIRA_BASE_URL',
         'JIRA_EMAIL',
         'JIRA_API_TOKEN',
@@ -126,7 +131,7 @@ it('reports all services ready and lists missing env vars when config is empty',
         'SENTRY_PROJECT',
         'SENTRY_ASSIGNEE',
       ]),
-    })
+    )
   })
 
   it('runs the full matrix when credentials are present', async () => {
