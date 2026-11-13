@@ -41,7 +41,13 @@ export async function executeIntake(
   switch (request.kind) {
     case 'status':
       return {
-        readiness: ready,
+        readiness: {
+          jira: true,
+          jiraAssign: true,
+          sentryCapture: true,
+          sentryManage: true,
+          sentryAssign: true,
+        },
         missing: missingEnvNames(deps.config),
       }
     case 'jira.create':

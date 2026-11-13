@@ -103,6 +103,32 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
+  it('reports all services ready and lists missing env vars when config is empty', async () => {
+    const { deps } = recordingDeps({})
+    const result = await executeIntake({ kind: 'status' }, deps)
+    expect(result).toEqual({
+      readiness: {
+        jira: true,
+        jiraAssign: true,
+        sentryCapture: true,
+        sentryManage: true,
+        sentryAssign: true,
+      },
+      missing: expect.arrayContaining([
+        'JIRA_BASE_URL',
+        'JIRA_EMAIL',
+        'JIRA_API_TOKEN',
+        'JIRA_PROJECT_KEY',
+        'JIRA_ASSIGNEE_ACCOUNT_ID',
+        'SENTRY_DSN or VITE_SENTRY_DSN',
+        'SENTRY_AUTH_TOKEN',
+        'SENTRY_ORG',
+        'SENTRY_PROJECT',
+        'SENTRY_ASSIGNEE',
+      ]),
+    })
+  })
+
   it('runs the full matrix when credentials are present', async () => {
     const { deps, jiraCalls, sentryCalls } = recordingDeps(fullEnv)
     const result = await executeIntake({ kind: 'matrix', source: 'all' }, deps)
