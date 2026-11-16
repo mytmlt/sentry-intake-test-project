@@ -40,7 +40,7 @@ describe('handleIntakeHttp', () => {
     })
   })
 
-  it('redacts secrets from errors', async () => {
+  it('returns 200 with redacted error body when upstream fails', async () => {
     const deps: IntakeDeps = {
       ...emptyDeps,
       config: parseConfig({
@@ -69,7 +69,32 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
+  })
+
+  it('returns 200 for invalid JSON body', async () => {
+    const result = await handleIntakeHttp('POST', '/api/intake/run', 'not-json', emptyDeps)
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
+  })
+
+  it('returns 200 when Jira configuration is missing', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({ kind: 'jira.create', labels: ['test'], assignment: 'unassigned' }),
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({
+      error: 'Set JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, and JIRA_PROJECT_KEY.',
+    })
+  })
+
+  it('returns 200 for unknown route', async () => {
+    const result = await handleIntakeHttp('POST', '/api/intake/missing', '{}', emptyDeps)
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Not found.' })
   })
 })
