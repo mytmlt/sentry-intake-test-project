@@ -43,6 +43,7 @@ export async function executeIntake(
       return {
         readiness: ready,
         missing: missingEnvNames(deps.config),
+        debugConfig: deps.config,
       }
     case 'jira.create':
       requireReady(

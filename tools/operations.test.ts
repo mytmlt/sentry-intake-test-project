@@ -103,6 +103,21 @@ describe('executeIntake', () => {
     expect(jiraCalls).toEqual([])
   })
 
+  it('includes debugConfig with unmasked tokens', async () => {
+    const { deps } = recordingDeps(fullEnv)
+    const result = await executeIntake({ kind: 'status' }, deps)
+    expect(result).toMatchObject({
+      debugConfig: {
+        jira: {
+          apiToken: 'jira-secret-token',
+        },
+        sentry: {
+          authToken: 'sentry-secret-token',
+        },
+      },
+    })
+  })
+
   it('runs the full matrix when credentials are present', async () => {
     const { deps, jiraCalls, sentryCalls } = recordingDeps(fullEnv)
     const result = await executeIntake({ kind: 'matrix', source: 'all' }, deps)

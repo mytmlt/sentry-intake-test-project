@@ -37,6 +37,10 @@ describe('handleIntakeHttp', () => {
     expect(result.status).toBe(200)
     expect(result.body).toMatchObject({
       readiness: { jira: false, sentryCapture: false },
+      debugConfig: {
+        jira: { apiToken: '' },
+        sentry: { authToken: '' },
+      },
     })
   })
 

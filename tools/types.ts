@@ -1,3 +1,5 @@
+import type { IntakeConfig } from './config.ts'
+
 export type JiraAction = 'created' | 'updated'
 export type JiraAssignment = 'assigned' | 'unassigned'
 export type SentryAction = 'created' | 'unresolved' | 'assigned'
@@ -68,6 +70,7 @@ export type IntakeReadiness = {
 export type StatusResult = {
   readiness: IntakeReadiness
   missing: string[]
+  debugConfig: IntakeConfig
 }
 
 export type IntakeRequest =
