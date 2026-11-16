@@ -69,7 +69,18 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
+  })
+
+  it('returns status 200 for invalid JSON', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      'not-json',
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
   })
 })
