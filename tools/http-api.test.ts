@@ -27,6 +27,31 @@ const emptyDeps = {
 } satisfies IntakeDeps
 
 describe('handleIntakeHttp', () => {
+  it('returns 200 with error body for invalid JSON', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      'not-json',
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Request body must be JSON.' })
+  })
+
+  it('returns 200 with error body for missing config', async () => {
+    const result = await handleIntakeHttp(
+      'POST',
+      '/api/intake/run',
+      JSON.stringify({
+        kind: 'jira.create',
+        labels: ['intake-test'],
+        assignment: 'unassigned',
+      }),
+      emptyDeps,
+    )
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ error: 'Set JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, and JIRA_PROJECT_KEY.' })
+  })
   it('returns status for GET /api/intake/status', async () => {
     const result = await handleIntakeHttp(
       'GET',
@@ -69,7 +94,7 @@ describe('handleIntakeHttp', () => {
       deps,
       ['jira-secret-token'],
     )
-    expect(result.status).toBe(500)
+    expect(result.status).toBe(200)
     expect(result.body).toEqual({ error: 'failed with ***' })
   })
 })
