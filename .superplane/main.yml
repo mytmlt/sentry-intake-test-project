@@ -1,0 +1,44 @@
+apiVersion: v2
+kind: Factory
+name: Sentry Intake Test Project 3
+stages:
+  - key: backlog
+    name: Backlog
+    automations:
+      - id: task-analysis
+        name: Backlog
+        uses: '@superplane/task-analysis'
+      - id: ab8fea7a0e0018ee
+        name: Custom automation
+        uses: automations/custom-automation.yaml
+      - id: intake-github-issues
+        name: GitHub issues
+        uses: '@superplane/intake/github-issues'
+  - key: implementation
+    name: Implement
+    run: implement
+    automations:
+      - id: implement
+        name: Implement
+        uses: '@superplane/implement'
+  - key: verify
+    name: Verify
+    automations:
+      - id: pr-discussion
+        name: Address PR feedback
+        uses: '@superplane/pr-discussion'
+      - id: pr-checks
+        name: Fix pull request checks
+        uses: '@superplane/pr-checks'
+      - id: merge-confidence
+        name: Merge confidence
+        uses: '@superplane/merge-confidence'
+      - id: review-request
+        name: Review request
+        uses: '@superplane/review-request'
+  - key: done
+    name: Done
+    automations:
+      - id: pr-closure
+        name: PR Closure
+        uses: '@superplane/pr-closure'
